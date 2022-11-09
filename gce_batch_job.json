@@ -5,7 +5,7 @@
                 "runnables": [
                     {
                         "container": {
-                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.4.5.backfill",
+                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.5.0.backfill",
                             "volumes": [
                                 "/mnt/share:/gcs"
                             ],
@@ -15,6 +15,11 @@
                                 "/gcs/backfill/"
                             ],
                             "options": "--privileged -e LILY_BLOCKSTORE_CACHE_SIZE=2000000 -e LILY_STATESTORE_CACHE_SIZE=800000"
+                        }
+                    },
+                    {
+                        "script": {
+                            "text": "ls /mnt/share"
                         }
                     }
                 ],
