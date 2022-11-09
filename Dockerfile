@@ -15,4 +15,3 @@ RUN mkdir /tmp/data
 
 # Run script
 ENTRYPOINT [ "/bin/bash" ]
-CMD [ "/lily/walk.sh" ]
