@@ -15,7 +15,7 @@ fi
 export GOLOG_LOG_FMT=json
 EXPORT_DIR="${2:-$(pwd)}"
 REPO_PATH="${REPO_PATH:-"/var/lib/lily"}"
-WALK_EPOCHS=2880
+WALK_EPOCHS="${WALK_EPOCHS:-"2880"}"
 
 # If the snapshot is compressed, extract it into tmp
 if [[ "${SNAPSHOT_FILE}" == *.zst ]]; then
