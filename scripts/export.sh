@@ -38,23 +38,25 @@ echo "Walking from epoch ${FROM_EPOCH} to ${TO_EPOCH}"
 sleep 10
 
 # Run job
-lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+# lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+
+archiver run --storage-path /tmp/data --ship-path "${EXPORT_DIR}" --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
 
 # Wait for job to finish
-lily job wait --id 1 && lily stop
+# lily job wait --id 1 && lily stop
 
 # Check there are no errors on visor_processing_reports.csv
-if grep -q "ERROR" /tmp/data/visor_processing_reports.csv; then
-  echo "Errors found on visor_processing_reports!"
+# if grep -q "ERROR" /tmp/data/visor_processing_reports.csv; then
+#   echo "Errors found on visor_processing_reports!"
 #   exit 1
-fi
+# fi
 
 # Compress the CSV files
-gzip /tmp/data/*.csv
+# gzip /tmp/data/*.csv
 
 # Move files to export dir
-echo "Saving CSV files to ${EXPORT_DIR}"
-FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
-mkdir -p "$EXPORT_DIR"/"$FILENAME"/
-mv /tmp/data/*.csv.gz "$EXPORT_DIR"/"$FILENAME"/
-mv lily.log "$EXPORT_DIR"/"$FILENAME"/
+# echo "Saving CSV files to ${EXPORT_DIR}"
+# FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
+# mkdir -p "$EXPORT_DIR"/"$FILENAME"/
+# mv /tmp/data/*.csv.gz "$EXPORT_DIR"/"$FILENAME"/
+# mv lily.log "$EXPORT_DIR"/"$FILENAME"/
