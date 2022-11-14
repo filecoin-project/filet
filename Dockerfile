@@ -22,7 +22,7 @@ FROM buildpack-deps:buster-curl
 
 # Install aria2 and zstd
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends aria2 zstd
+    && apt-get -y install --no-install-recommends aria2 zstd jq
 
 ENV SRC_PATH /build
 
