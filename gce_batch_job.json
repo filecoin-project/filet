@@ -5,11 +5,17 @@
                 "runnables": [
                     {
                         "container": {
-                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.3.4",
+                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.5.6",
                             "volumes": [
-                                "/mnt/share:/gcs"
+                                "/mnt/share:/gcs",
+                                "/mnt/snapshots/historical-exports:/snapshots"
                             ],
-                            "options": "--privileged --tmpfs /ram -e REPO_PATH=/ram/.lily"
+                            "entrypoint": "/lily/export.sh",
+                            "commands": [
+                                "/snapshots/snapshot_2295360_2298242_1667419153.car.zst",
+                                "/gcs/backfill/"
+                            ],
+                            "options": "--privileged -e LILY_BLOCKSTORE_CACHE_SIZE=7000000 -e LILY_STATESTORE_CACHE_SIZE=4500000"
                         }
                     },
                     {
@@ -19,9 +25,9 @@
                     }
                 ],
                 "computeResource": {
-                    "cpuMilli": 48000,
-                    "memoryMib": 183105,
-                    "boot_disk_mib": 190735
+                    "cpuMilli": 32000,
+                    "memoryMib": 131072,
+                    "boot_disk_mib": 500000
                 },
                 "volumes": [
                     {
@@ -29,6 +35,12 @@
                             "remotePath": "pl-data-temp"
                         },
                         "mountPath": "/mnt/share"
+                    },
+                    {
+                        "gcs": {
+                            "remotePath": "fil-mainnet-archival-snapshots"
+                        },
+                        "mountPath": "/mnt/snapshots"
                     }
                 ],
                 "maxRetryCount": 1,
@@ -42,7 +54,7 @@
         "instances": [
             {
                 "policy": {
-                    "machineType": "n2-standard-48",
+                    "machineType": "n2-standard-32",
                     "provisioningModel": "SPOT"
                 }
             }

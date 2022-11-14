@@ -1,13 +1,20 @@
 # :cook: Filet
 
-Filet is a simple Docker image to get data from Filecoin snapshots using [Lily](https://github.com/filecoin-project/lily).
+Filet is just a Docker container that makes it simple to get CSV data from Filecoin Archival Snapshots using [Lily](https://github.com/filecoin-project/lily) and [`sentinel-archiver`](https://github.com/filecoin-project/sentinel-archiver/).
 
 ## :rocket: Usage
 
-The `davidgasquez/filet` image available on Docker Hub is configured to run the `walk.sh` script, which will download the latest snapshot, import it into a local Lily node, and run all tasks. CSVs will be saved under `/tmp/data`.
-
-To save the CSVs and Lily datastore locally, you can run `make run` or the following command:
+The `filet` image available on Google Container Artifact Hub. You can run the `export.sh` script pointing it to a Filecoin Archival Snapshot. CSVs will produced and saved to the provided directory.
 
 ```bash
-docker run  -it -v $PWD/.lily:/var/lib/lily -v $PWD:/tmp/data davidgasquez/filet:lastest
+./export.sh [SNAPSHOT_FILE] [EXPORT_DIR]
+```
+
+You can run the following command to generate CSVs from an Filecoin Archival Snapshot:
+
+```bash
+docker run -it \
+    -v $PWD:/tmp/data \
+    europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:latest -- \
+    /lily/export.sh archival_snapshot.car.zst .
 ```
