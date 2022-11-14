@@ -4,4 +4,4 @@
             Format = "CSV"
             Path = "/tmp/data"
             OmitHeader = false
-            FilePattern = "{jobname}-{table}.csv"
+            FilePattern = "{table}.csv"
