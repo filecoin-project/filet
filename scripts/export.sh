@@ -48,14 +48,15 @@ sleep 10
 # Alternatively, we could run the export with lily
 lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
 lily job wait --id 1
-lily stop
 
-# Check the job status is not failed
-# JOB_STATUS=$(lily job status --id 1)
-# if [[ "${JOB_STATUS}" == *"failed"* ]]; then
-#   echo "Job failed"
-#   exit 1
-# fi
+# Fail if job error is not empty string
+JOB_ERROR=$(lily job list | jq ".[0]" | jq -r ".Error")
+if [[ "${JOB_ERROR}" != "" ]]; then
+  echo "Job failed with error: ${JOB_ERROR}"
+  exit 1
+fi
+
+lily stop
 
 # Check there are no errors on visor_processing_reports.csv
 if grep -q "ERROR" /tmp/data/*visor_processing_reports.csv; then
