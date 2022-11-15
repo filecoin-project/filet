@@ -5,3 +5,5 @@
             Path = "/tmp/data"
             OmitHeader = false
             FilePattern = "{table}.csv"
+[API]
+    Timeout = "180s"
