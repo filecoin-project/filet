@@ -53,6 +53,7 @@ lily job wait --id 1
 JOB_ERROR=$(lily job list | jq ".[0]" | jq -r ".Error")
 if [[ "${JOB_ERROR}" != "" ]]; then
   echo "Job failed with error: ${JOB_ERROR}"
+  cat lily.log
   exit 1
 fi
 
