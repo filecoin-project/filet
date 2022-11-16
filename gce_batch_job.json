@@ -5,7 +5,7 @@
                 "runnables": [
                     {
                         "container": {
-                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.5.9",
+                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.5.11",
                             "volumes": [
                                 "/mnt/share:/gcs",
                                 "/mnt/snapshots/historical-exports:/snapshots"
@@ -44,7 +44,7 @@
                     }
                 ],
                 "maxRetryCount": 1,
-                "maxRunDuration": "86400s"
+                "maxRunDuration": "259200s"
             },
             "taskCount": 1,
             "parallelism": 1
