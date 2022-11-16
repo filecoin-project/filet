@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := run
 
-VERSION=v0.5.9
+VERSION=v0.5.11
 IMAGE=europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet
 
 build:
@@ -17,7 +17,7 @@ push: build
 	docker push $(IMAGE):latest
 
 clean:
-	sudo rm -rf .lily
+	sudo rm -rf .lily lily.log mainnet/
 	rm -rf *.car *.aria2
 
 send: push
