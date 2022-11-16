@@ -32,7 +32,7 @@ nohup lily daemon --repo="${REPO_PATH}" --config=/lily/config.toml --bootstrap=f
 lily wait-api
 
 # Extract the available walking epochs
-STATE=$(lily chain state-inspect -l 3000)
+STATE=$(lily chain state-inspect -l 2882)
 # FROM_EPOCH=$(echo "${SNAPSHOT_FILE}" | cut -d'_' -f2)
 FROM_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.oldest")
 FROM_EPOCH=$((FROM_EPOCH + 2))
@@ -44,7 +44,7 @@ echo "Walking from epoch ${FROM_EPOCH} to ${TO_EPOCH}"
 sleep 10
 
 # Run export
-# archiver run --storage-path /tmp/data --ship-path "${EXPORT_DIR}" --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
+# archiver export --storage-path /tmp/data --ship-path "${EXPORT_DIR}" --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
 
 # Alternatively, we could run the export with lily
 lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
