@@ -5,14 +5,14 @@
                 "runnables": [
                     {
                         "container": {
-                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.5.11",
+                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.5.12",
                             "volumes": [
                                 "/mnt/share:/gcs",
                                 "/mnt/snapshots/historical-exports:/snapshots"
                             ],
                             "entrypoint": "/lily/export.sh",
                             "commands": [
-                                "/snapshots/snapshot_1592640_1595522_1667177189.car.zst",
+                                "/snapshots/snapshot_2880_5762_1666948097.car.zst",
                                 "/gcs/backfill/"
                             ],
                             "options": "--privileged -e LILY_BLOCKSTORE_CACHE_SIZE=1500000 -e LILY_STATESTORE_CACHE_SIZE=1500000"

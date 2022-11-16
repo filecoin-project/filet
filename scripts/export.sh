@@ -32,7 +32,7 @@ nohup lily daemon --repo="${REPO_PATH}" --config=/lily/config.toml --bootstrap=f
 lily wait-api
 
 # Extract the available walking epochs
-STATE=$(lily chain state-inspect -l 2882)
+STATE=$(lily chain state-inspect -l 3000)
 # FROM_EPOCH=$(echo "${SNAPSHOT_FILE}" | cut -d'_' -f2)
 FROM_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.oldest")
 FROM_EPOCH=$((FROM_EPOCH + 2))
@@ -67,8 +67,8 @@ if grep -q "ERROR" /tmp/data/*visor_processing_reports.csv; then
   exit 1
 fi
 
-# Check the chain_consensus file has WALK_EPOCHS + 2 lines
-if [[ $(wc -l < /tmp/data/*chain_consensus.csv) -ne $((WALK_EPOCHS + 2)) ]]; then
+# Check the chain_consensus file has WALK_EPOCHS + 1 (header) lines
+if [[ $(wc -l < /tmp/data/*chain_consensus.csv) -ne $((WALK_EPOCHS + 1)) ]]; then
   echo "chain_consensus file has $(wc -l < /tmp/data/*chain_consensus.csv) lines, expected $((WALK_EPOCHS + 2))"
   exit 1
 fi
