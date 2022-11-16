@@ -12,7 +12,8 @@ if [[ -z "${SNAPSHOT_FILE}" ]]; then
   exit 1
 fi
 
-export GOLOG_LOG_FMT=json
+export GOLOG_LOG_FMT="json"
+export GOLOG_LOG_LEVEL="debug"
 EXPORT_DIR="${2:-$(pwd)}"
 REPO_PATH="${REPO_PATH:-"/var/lib/lily"}"
 WALK_EPOCHS="${WALK_EPOCHS:-"2880"}"
