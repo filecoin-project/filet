@@ -15,7 +15,7 @@ WORKDIR $SRC_PATH
 RUN git clone --branch kasteph/to https://github.com/filecoin-project/sentinel-archiver.git && \
     cd sentinel-archiver && make build
 
-RUN git clone --branch frrist/vm-msg-ret-fix https://github.com/filecoin-project/lily.git && \
+RUN git clone https://github.com/filecoin-project/lily.git && \
     cd lily && CGO_ENABLED=1 make clean all
 
 FROM buildpack-deps:buster-curl
