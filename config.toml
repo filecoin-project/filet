@@ -3,7 +3,5 @@
         [Storage.File.CSV]
             Format = "CSV"
             Path = "/tmp/data"
-            OmitHeader = false
-            FilePattern = "{table}.csv"
-[API]
-    Timeout = "180s"
+            OmitHeader = true
+            FilePattern = "{jobname}-{table}.csv"
