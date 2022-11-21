@@ -32,10 +32,10 @@ nohup lily daemon --repo="${REPO_PATH}" --config=/lily/config.toml --bootstrap=f
 lily wait-api
 
 # Extract the available walking epochs
-STATE=$(lily chain state-inspect -l 2880)
+STATE=$(lily chain state-inspect -l 3000)
 # FROM_EPOCH=$(echo "${SNAPSHOT_FILE}" | cut -d'_' -f2)
 FROM_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.oldest")
-FROM_EPOCH=$((FROM_EPOCH + 2))
+FROM_EPOCH=$((FROM_EPOCH + 1))
 # Add WALKEPOCHS to the FROM_EPOCH
 TO_EPOCH=$((FROM_EPOCH + WALK_EPOCHS))
 # TO_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.newest")
