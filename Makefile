@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := run
 
-VERSION=v0.5.12
+VERSION=v0.5.13.sentinel
 IMAGE=europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet
 
 build:
