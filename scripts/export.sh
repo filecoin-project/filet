@@ -32,7 +32,7 @@ nohup lily daemon --repo="${REPO_PATH}" --config=/lily/config.toml --bootstrap=f
 lily wait-api
 
 # Extract the available walking epochs
-STATE=$(lily chain state-inspect -l 3000)
+STATE=$(lily chain state-inspect -l 2880)
 # FROM_EPOCH=$(echo "${SNAPSHOT_FILE}" | cut -d'_' -f2)
 FROM_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.oldest")
 FROM_EPOCH=$((FROM_EPOCH + 2))
@@ -44,42 +44,42 @@ echo "Walking from epoch ${FROM_EPOCH} to ${TO_EPOCH}"
 sleep 10
 
 # Run export
-# archiver export --storage-path /tmp/data --ship-path "${EXPORT_DIR}" --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
+archiver export --storage-path /tmp/data --ship-path "${EXPORT_DIR}" --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
 
 # Alternatively, we could run the export with lily
-lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
-lily job wait --id 1
+# lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+# lily job wait --id 1
 
-# Fail if job error is not empty string
-JOB_ERROR=$(lily job list | jq ".[0]" | jq -r ".Error")
-if [[ "${JOB_ERROR}" != "" ]]; then
-  echo "Job failed with error: ${JOB_ERROR}"
-  cat lily.log
-  exit 1
-fi
+# # Fail if job error is not empty string
+# JOB_ERROR=$(lily job list | jq ".[0]" | jq -r ".Error")
+# if [[ "${JOB_ERROR}" != "" ]]; then
+#   echo "Job failed with error: ${JOB_ERROR}"
+#   cat lily.log
+#   exit 1
+# fi
 
-lily stop
+# lily stop
 
-# Check there are no errors on visor_processing_reports.csv
-if grep -q "ERROR" /tmp/data/*visor_processing_reports.csv; then
-  echo "Errors found on visor_processing_reports!"
-  cat /tmp/data/*visor_processing_reports.csv | grep "ERROR"
-  exit 1
-fi
+# # Check there are no errors on visor_processing_reports.csv
+# if grep -q "ERROR" /tmp/data/*visor_processing_reports.csv; then
+#   echo "Errors found on visor_processing_reports!"
+#   cat /tmp/data/*visor_processing_reports.csv | grep "ERROR"
+#   exit 1
+# fi
 
-# Check the chain_consensus file has WALK_EPOCHS + 1 (header) lines
-if [[ $(wc -l < /tmp/data/*chain_consensus.csv) -ne $((WALK_EPOCHS + 1)) ]]; then
-  echo "chain_consensus file has $(wc -l < /tmp/data/*chain_consensus.csv) lines, expected $((WALK_EPOCHS + 2))"
-  exit 1
-fi
+# # Check the chain_consensus file has WALK_EPOCHS + 1 (header) lines
+# if [[ $(wc -l < /tmp/data/*chain_consensus.csv) -ne $((WALK_EPOCHS + 1)) ]]; then
+#   echo "chain_consensus file has $(wc -l < /tmp/data/*chain_consensus.csv) lines, expected $((WALK_EPOCHS + 2))"
+#   exit 1
+# fi
 
-# Compress the CSV files
-gzip /tmp/data/*.csv
+# # Compress the CSV files
+# gzip /tmp/data/*.csv
 
-# Move files to export dir
-echo "Saving CSV files to ${EXPORT_DIR}"
-FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
-if [ -d "${EXPORT_DIR:?}"/"${FILENAME:?}"/ ]; then rm -Rf "${EXPORT_DIR:?}"/"${FILENAME:?}"/; fi
-mkdir -p "$EXPORT_DIR"/"$FILENAME"/
-mv /tmp/data/*.csv.gz "$EXPORT_DIR"/"$FILENAME"/
-mv lily.log "$EXPORT_DIR"/"$FILENAME"/
+# # Move files to export dir
+# echo "Saving CSV files to ${EXPORT_DIR}"
+# FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
+# if [ -d "${EXPORT_DIR:?}"/"${FILENAME:?}"/ ]; then rm -Rf "${EXPORT_DIR:?}"/"${FILENAME:?}"/; fi
+# mkdir -p "$EXPORT_DIR"/"$FILENAME"/
+# mv /tmp/data/*.csv.gz "$EXPORT_DIR"/"$FILENAME"/
+# mv lily.log "$EXPORT_DIR"/"$FILENAME"/
