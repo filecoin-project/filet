@@ -44,7 +44,10 @@ echo "Walking from epoch ${FROM_EPOCH} to ${TO_EPOCH}"
 sleep 10
 
 # Run export
-archiver export --storage-path /tmp/data --ship-path "${EXPORT_DIR}" --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
+archiver export --storage-path /tmp/data --ship-path /tmp/data --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
+
+# Copy the exported data to the export directory
+cp -r /tmp/data/mainnet/ "${EXPORT_DIR}"
 
 # Alternatively, we could run the export with lily
 # lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
