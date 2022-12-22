@@ -36,3 +36,18 @@ To get the batches you can use the following command to filter by snapshot heigh
 ```bash
 grep -E '^[2226480-2232002]$'
 ```
+
+## :wrench: Managing Jobs
+
+In case you need to retry a bunch of failed jobs, you can use the following commands:
+
+```bash
+# Get the list of failed jobs
+gcloud alpha batch jobs list --format=json --filter="Status.state:FAILED" > failed_jobs.json
+
+# Get the snapshot name from failed jobs
+cat failed_jobs.json | jq ".[].taskGroups[0].taskSpec.runnables[0].container.commands[0]" -r | cut -d '/' -f 2 | sort > failed_jobs.list
+
+# Retry the failed jobs
+./scripts/send_export_jobs.sh failed_jobs.list
+```
