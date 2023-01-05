@@ -44,7 +44,7 @@
                     }
                 ],
                 "maxRetryCount": 0,
-                "maxRunDuration": "259200s"
+                "maxRunDuration": "604800s"
             },
             "taskCount": 1,
             "parallelism": 1
