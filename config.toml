@@ -1,3 +1,6 @@
+[API]
+    Timeout = "5m"
+
 [Storage]
     [Storage.File]
         [Storage.File.CSV]
