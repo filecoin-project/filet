@@ -5,7 +5,7 @@
                 "runnables": [
                     {
                         "container": {
-                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.6.1",
+                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.6.2",
                             "volumes": [
                                 "/mnt/share:/gcs",
                                 "/mnt/snapshots/historical-exports:/snapshots"
@@ -27,7 +27,7 @@
                 "computeResource": {
                     "cpuMilli": 32000,
                     "memoryMib": 131072,
-                    "boot_disk_mib": 500000
+                    "boot_disk_mib": 400000
                 },
                 "volumes": [
                     {
