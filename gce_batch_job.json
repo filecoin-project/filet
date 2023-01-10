@@ -40,7 +40,10 @@
                         "gcs": {
                             "remotePath": "fil-mainnet-archival-snapshots"
                         },
-                        "mountPath": "/mnt/snapshots"
+                        "mountPath": "/mnt/snapshots",
+                        "mountOptions:" [
+                            "--billing-project protocol-labs-data",
+                        ]
                     }
                 ],
                 "maxRetryCount": 0,
