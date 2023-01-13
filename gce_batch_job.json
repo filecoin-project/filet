@@ -25,9 +25,9 @@
                     }
                 ],
                 "computeResource": {
-                    "cpuMilli": 32000,
-                    "memoryMib": 131072,
-                    "boot_disk_mib": 400000
+                    "cpuMilli": 48000,
+                    "memoryMib": 366211,
+                    "boot_disk_mib": 500000
                 },
                 "volumes": [
                     {
@@ -54,7 +54,7 @@
         "instances": [
             {
                 "policy": {
-                    "machineType": "n2-standard-32",
+                    "machineType": "n2-highmem-48",
                     "provisioningModel": "SPOT"
                 }
             }
