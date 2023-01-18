@@ -41,7 +41,7 @@ lily wait-api
 
 # Extract the available walking epochs
 echo "Checking available walking epochs..."
-STATE=$(lily chain state-inspect -l 200)
+STATE=$(lily chain state-inspect -l 3000)
 
 # Get the oldest and newest epochs
 FROM_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.oldest")
