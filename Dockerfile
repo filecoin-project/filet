@@ -12,10 +12,10 @@ RUN apt-get update -y && \
 
 WORKDIR $SRC_PATH
 
-RUN git clone https://github.com/filecoin-project/sentinel-archiver.git && \
-    cd sentinel-archiver && make build
+RUN git clone https://github.com/filecoin-project/lily-archiver.git && \
+    cd lily-archiver && make build
 
-RUN git clone --branch v0.13.0 https://github.com/filecoin-project/lily.git && \
+RUN git clone --branch frrist/fix-vm_messages-parsing https://github.com/filecoin-project/lily.git && \
     cd lily && CGO_ENABLED=1 make clean all
 
 FROM buildpack-deps:buster-curl
@@ -26,7 +26,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 ENV SRC_PATH /build
 
-COPY --from=builder $SRC_PATH/sentinel-archiver/sentinel-archiver /usr/local/bin/archiver
+COPY --from=builder $SRC_PATH/lily-archiver/lily-archiver /usr/local/bin/archiver
 COPY --from=builder $SRC_PATH/lily/lily /usr/local/bin/lily
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libOpenCL.so* /lib/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libhwloc.so* /lib/
