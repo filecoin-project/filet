@@ -5,7 +5,7 @@
                 "runnables": [
                     {
                         "container": {
-                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.6.2",
+                            "imageUri": "europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:v0.6.3",
                             "volumes": [
                                 "/mnt/share:/gcs",
                                 "/mnt/snapshots/historical-exports:/snapshots"
@@ -13,9 +13,9 @@
                             "entrypoint": "/lily/export.sh",
                             "commands": [
                                 "/snapshots/$SNAPSHOT_NAME",
-                                "/gcs/backfill/data/"
+                                "/gcs/filet-jobs/"
                             ],
-                            "options": "--privileged -e LILY_BLOCKSTORE_CACHE_SIZE=1500000 -e LILY_STATESTORE_CACHE_SIZE=1500000"
+                            "options": "--privileged -e LILY_BLOCKSTORE_CACHE_SIZE=1400000 -e LILY_STATESTORE_CACHE_SIZE=1400000"
                         }
                     },
                     {
@@ -25,8 +25,8 @@
                     }
                 ],
                 "computeResource": {
-                    "cpuMilli": 48000,
-                    "memoryMib": 366211,
+                    "cpuMilli": 16000,
+                    "memoryMib": 131072,
                     "boot_disk_mib": 500000
                 },
                 "volumes": [
@@ -47,7 +47,7 @@
                     }
                 ],
                 "maxRetryCount": 0,
-                "maxRunDuration": "604800s"
+                "maxRunDuration": "259200s"
             },
             "taskCount": 1,
             "parallelism": 1
@@ -57,7 +57,7 @@
         "instances": [
             {
                 "policy": {
-                    "machineType": "n2-highmem-48",
+                    "machineType": "n2-highmem-16",
                     "provisioningModel": "SPOT"
                 }
             }
