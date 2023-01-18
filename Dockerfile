@@ -4,7 +4,7 @@ ENV SRC_PATH    /build
 ENV GO111MODULE on
 ENV GOPROXY     https://proxy.golang.org
 
-# Install build deps for lily and sentinel-archiver
+# Install build deps for lily and lily-archiver
 RUN apt-get update -y && \
     apt-get install git make ca-certificates jq hwloc libhwloc-dev mesa-opencl-icd ocl-icd-opencl-dev -y && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
@@ -15,7 +15,7 @@ WORKDIR $SRC_PATH
 RUN git clone https://github.com/filecoin-project/lily-archiver.git && \
     cd lily-archiver && make build
 
-RUN git clone --branch frrist/fix-vm_messages-parsing https://github.com/filecoin-project/lily.git && \
+RUN git clone https://github.com/filecoin-project/lily.git && \
     cd lily && CGO_ENABLED=1 make clean all
 
 FROM buildpack-deps:buster-curl

@@ -42,7 +42,7 @@
                         },
                         "mountPath": "/mnt/snapshots",
                         "mountOptions": [
-                            "--billing-project protocol-labs-data",
+                            "--billing-project protocol-labs-data"
                         ]
                     }
                 ],
