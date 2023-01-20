@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 #
-# Usage: ./export.sh [SNAPSHOT_FILE] [EXPORT_DIR]
+# Usage: ./export.sh [SNAPSHOT_FILE] [EXPORT_DIR] [TASKS]
 
 set -euo pipefail
 
 # Set arguments
 SNAPSHOT_FILE="${1}"
 EXPORT_DIR="${2:-$(pwd)}"
+TASKS="${3:-}"
 
 # Set environment variables
 REPO_PATH="${REPO_PATH:-"/var/lib/lily"}"
@@ -53,8 +54,12 @@ FROM_EPOCH=$((FROM_EPOCH + 1))
 echo "Walking from epoch ${FROM_EPOCH} to ${TO_EPOCH}..."
 sleep 5
 
-# Run the walk job
-lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+# Run the walk job, if TASKS is provided, use it
+if [[ -z "${TASKS:-}" ]]; then
+  lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+else
+  lily job run --storage=CSV --tasks "${TASKS}" walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+fi
 
 # Wait for the job to finish
 echo "Waiting for job to finish..."
@@ -90,6 +95,7 @@ gzip /tmp/data/*.csv
 echo "Saving CSV files to ${EXPORT_DIR}"
 
 # Clean export dir
+# TODO: FILENAME should be the snapshot epoch range
 FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
 if [ -d "${EXPORT_DIR:?}"/"${FILENAME:?}"/ ]; then
   rm -Rf "${EXPORT_DIR:?}"/"${FILENAME:?}"/;

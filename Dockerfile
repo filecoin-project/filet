@@ -12,7 +12,7 @@ RUN apt-get update -y && \
 
 WORKDIR $SRC_PATH
 
-RUN git clone https://github.com/filecoin-project/lily.git && \
+RUN git clone --branch frrist/recover-panic-loadsectorstate https://github.com/filecoin-project/lily.git && \
     cd lily && CGO_ENABLED=1 make clean all
 
 FROM buildpack-deps:buster-curl
