@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := run
 
-VERSION=v0.6.6.lily
+VERSION=v0.6.7.lily
 IMAGE=europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet
 
 build:
