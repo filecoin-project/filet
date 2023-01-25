@@ -4,13 +4,16 @@ ENV SRC_PATH    /build
 ENV GO111MODULE on
 ENV GOPROXY     https://proxy.golang.org
 
-# Install build deps for Lily
+# Install build deps for lily and lily-archiver
 RUN apt-get update -y && \
     apt-get install git make ca-certificates jq hwloc libhwloc-dev mesa-opencl-icd ocl-icd-opencl-dev -y && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     . "$HOME/.cargo/env"
 
 WORKDIR $SRC_PATH
+
+RUN git clone https://github.com/filecoin-project/lily-archiver.git && \
+    cd lily-archiver && make build
 
 RUN git clone --branch frrist/recover-panic-loadsectorstate https://github.com/filecoin-project/lily.git && \
     cd lily && CGO_ENABLED=1 make clean all
@@ -23,6 +26,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 ENV SRC_PATH /build
 
+COPY --from=builder $SRC_PATH/lily-archiver/lily-archiver /usr/local/bin/archiver
 COPY --from=builder $SRC_PATH/lily/lily /usr/local/bin/lily
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libOpenCL.so* /lib/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libhwloc.so* /lib/
