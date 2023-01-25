@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 #
-# Usage: ./export.sh [SNAPSHOT_FILE] [EXPORT_DIR]
+# Usage: ./export.sh [SNAPSHOT_FILE] [EXPORT_DIR] [TASKS]
 
-set -euox pipefail
+set -euo pipefail
 
+# Set arguments
 SNAPSHOT_FILE="${1}"
+EXPORT_DIR="${2:-$(pwd)}"
+TASKS="${3:-}"
+
+# Set environment variables
+REPO_PATH="${REPO_PATH:-"/var/lib/lily"}"
 
 # Error if the snapshot file is not provided
 if [[ -z "${SNAPSHOT_FILE}" ]]; then
@@ -13,77 +19,89 @@ if [[ -z "${SNAPSHOT_FILE}" ]]; then
 fi
 
 export GOLOG_LOG_FMT="json"
-export GOLOG_LOG_LEVEL="debug"
-EXPORT_DIR="${2:-$(pwd)}"
-REPO_PATH="${REPO_PATH:-"/var/lib/lily"}"
-WALK_EPOCHS="${WALK_EPOCHS:-"2880"}"
+export GOLOG_LOG_LEVEL="info"
 
 # If the snapshot is compressed, extract it into tmp
 if [[ "${SNAPSHOT_FILE}" == *.zst ]]; then
+  echo "Extracting snapshot file..."
   unzstd "${SNAPSHOT_FILE}" -o /tmp/snapshot.car
 fi
 
 # Start Lily
-echo "Initializing Lily repository with ${SNAPSHOT_FILE}"
+echo "Initializing Lily repository with ${SNAPSHOT_FILE}..."
 lily init --config /lily/config.toml --repo "${REPO_PATH}" --import-snapshot /tmp/snapshot.car
-nohup lily daemon --repo="${REPO_PATH}" --config=/lily/config.toml --bootstrap=false &> lily.log &
+
+echo "Running daemon..."
+lily daemon \
+    --repo="${REPO_PATH}" \
+    --config=/lily/config.toml \
+    --bootstrap=false &> lily.log &
 
 # Wait for Lily to come online
 lily wait-api
 
 # Extract the available walking epochs
+echo "Checking available walking epochs..."
 STATE=$(lily chain state-inspect -l 3000)
-# FROM_EPOCH=$(echo "${SNAPSHOT_FILE}" | cut -d'_' -f2)
+
+# Get the oldest and newest epochs
 FROM_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.oldest")
+TO_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.newest")
+
+# Since we can't walk the first epoch (no previous state to diff from), we need to add 1 to the FROM_EPOCH
 FROM_EPOCH=$((FROM_EPOCH + 1))
-# Add WALKEPOCHS to the FROM_EPOCH
-TO_EPOCH=$((FROM_EPOCH + WALK_EPOCHS))
-# TO_EPOCH=$(echo "${STATE}" | jq -r ".summary.stateroots.newest")
 
-echo "Walking from epoch ${FROM_EPOCH} to ${TO_EPOCH}"
-sleep 10
+echo "Walking from epoch ${FROM_EPOCH} to ${TO_EPOCH}..."
+sleep 5
 
-# Run export
-archiver export --storage-path /tmp/data --ship-path /tmp/data --min-height="${FROM_EPOCH}" --max-height="${TO_EPOCH}"
+# Run the walk job, if TASKS is provided, use it
+if [[ -z "${TASKS:-}" ]]; then
+  lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+else
+  lily job run --storage=CSV --tasks "${TASKS}" walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
+fi
 
-# Copy the exported data to the export directory
-FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
-cp -r /tmp/data/mainnet/ "${EXPORT_DIR}"/"${FILENAME}"/
+# Wait for the job to finish
+echo "Waiting for job to finish..."
+lily job wait --id 1
 
-# # Alternatively, we could run the export with lily
-# lily job run --storage=CSV walk --from "${FROM_EPOCH}" --to "${TO_EPOCH}"
-# lily job wait --id 1
+# Fail if job error is not empty string
+JOB_ERROR=$(lily job list | jq ".[0]" | jq -r ".Error")
+if [[ "${JOB_ERROR}" != "" ]]; then
+  echo "Job failed with error: ${JOB_ERROR}"
+  cat lily.log
+  exit 1
+fi
 
-# # Fail if job error is not empty string
-# JOB_ERROR=$(lily job list | jq ".[0]" | jq -r ".Error")
-# if [[ "${JOB_ERROR}" != "" ]]; then
-#   echo "Job failed with error: ${JOB_ERROR}"
-#   cat lily.log
-#   exit 1
-# fi
+lily stop
 
-# lily stop
+# Check there are no errors on visor_processing_reports.csv
+if grep -q "ERROR" /tmp/data/*visor_processing_reports.csv; then
+  echo "Errors found on visor_processing_reports!"
+  grep "ERROR" /tmp/data/*visor_processing_reports.csv
+fi
 
-# # Check there are no errors on visor_processing_reports.csv
-# if grep -q "ERROR" /tmp/data/*visor_processing_reports.csv; then
-#   echo "Errors found on visor_processing_reports!"
-#   cat /tmp/data/*visor_processing_reports.csv | grep "ERROR"
-#   exit 1
-# fi
-
-# # Check the chain_consensus file has WALK_EPOCHS + 1 (header) lines
+# Check the chain_consensus file has WALK_EPOCHS + 1 (header) lines
 # if [[ $(wc -l < /tmp/data/*chain_consensus.csv) -ne $((WALK_EPOCHS + 1)) ]]; then
 #   echo "chain_consensus file has $(wc -l < /tmp/data/*chain_consensus.csv) lines, expected $((WALK_EPOCHS + 2))"
 #   exit 1
 # fi
 
-# # Compress the CSV files
-# gzip /tmp/data/*.csv
+# Compress the CSV files
+echo "Compressing CSV files..."
+gzip /tmp/data/*.csv
 
-# # Move files to export dir
-# echo "Saving CSV files to ${EXPORT_DIR}"
-# FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
-# if [ -d "${EXPORT_DIR:?}"/"${FILENAME:?}"/ ]; then rm -Rf "${EXPORT_DIR:?}"/"${FILENAME:?}"/; fi
-# mkdir -p "$EXPORT_DIR"/"$FILENAME"/
-# mv /tmp/data/*.csv.gz "$EXPORT_DIR"/"$FILENAME"/
-# mv lily.log "$EXPORT_DIR"/"$FILENAME"/
+# Move files to export dir
+echo "Saving CSV files to ${EXPORT_DIR}"
+
+# Clean export dir
+# TODO: FILENAME should be the snapshot epoch range
+FILENAME=$(basename "${SNAPSHOT_FILE}" .car.zst)
+if [ -d "${EXPORT_DIR:?}"/"${FILENAME:?}"/ ]; then
+  rm -Rf "${EXPORT_DIR:?}"/"${FILENAME:?}"/;
+fi
+mkdir -p "$EXPORT_DIR"/"$FILENAME"/
+
+# Add data and log files to export dir
+mv /tmp/data/*.csv.gz "$EXPORT_DIR"/"$FILENAME"/
+mv lily.log "$EXPORT_DIR"/"$FILENAME"/
