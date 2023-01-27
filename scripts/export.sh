@@ -35,7 +35,7 @@ echo "Running daemon..."
 lily daemon \
     --repo="${REPO_PATH}" \
     --config=/lily/config.toml \
-    --bootstrap=false &> lily.log &
+    --bootstrap=false > >(tee lily.log) 2&>1 &
 
 # Wait for Lily to come online
 lily wait-api
