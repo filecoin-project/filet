@@ -28,6 +28,8 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
+    env:
+      IMAGE: europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet
     steps:
       - uses: actions/checkout@v3
 
@@ -52,6 +54,8 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v3
         with:
+          images: |
+            ${{ env.IMAGE }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=semver,pattern={{raw}}
@@ -60,5 +64,5 @@ jobs:
         with:
           push: true
           tags: |
-            europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:${{ steps.meta.outputs.version }}
-            europe-west1-docker.pkg.dev/protocol-labs-data/pl-data/filet:latest
+            ${{ env.IMAGE }}:${{ steps.meta.outputs.version }}
+            ${{ env.IMAGE }}:latest
