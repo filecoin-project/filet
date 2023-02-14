@@ -38,6 +38,7 @@ jobs:
       - id: auth
         uses: google-github-actions/auth@v1.0.0
         with:
+          token_format: access_token
           workload_identity_provider: ${{ secrets.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
           access_token_lifetime: 300s
