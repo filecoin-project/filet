@@ -32,7 +32,7 @@ echo "Initializing Lily repository with ${SNAPSHOT_FILE}..."
 lily init --config /lily/config.toml --repo "${REPO_PATH}" --import-snapshot /tmp/snapshot.car
 
 echo "Running daemon..."
-lily daemon \
+LOTUS_VM_ENABLE_TRACING=1 lily daemon \
     --repo="${REPO_PATH}" \
     --config=/lily/config.toml \
     --bootstrap=false &> >(tee lily.log) &
