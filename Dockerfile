@@ -1,4 +1,4 @@
-FROM golang:1.18-buster AS builder
+FROM golang:1.19-buster AS builder
 
 ENV SRC_PATH    /build
 ENV GO111MODULE on
