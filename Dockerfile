@@ -15,7 +15,7 @@ WORKDIR $SRC_PATH
 RUN git clone https://github.com/filecoin-project/lily-archiver.git && \
     cd lily-archiver && make build
 
-RUN git clone https://github.com/filecoin-project/lily.git && \
+RUN git clone --depth 1 --branch v0.15.1 https://github.com/filecoin-project/lily.git && \
     cd lily && CGO_ENABLED=1 make clean all
 
 FROM buildpack-deps:buster-curl
