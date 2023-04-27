@@ -1,3 +1,10 @@
+[Chainstore]
+    EnableSplitstore = true
+    [Chainstore.Splitstore]
+        ColdStoreType = "discard"
+        HotStoreFullGCFrequency = 0
+        HotStoreMaxSpaceTarget = 0
+
 [Storage]
     [Storage.File]
         [Storage.File.CSV]
