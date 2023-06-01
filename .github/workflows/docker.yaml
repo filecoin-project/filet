@@ -52,7 +52,7 @@ jobs:
           password: ${{ steps.auth.outputs.access_token }}
 
       - id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: |
             ${{ env.IMAGE }}
@@ -64,5 +64,5 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ env.IMAGE }}:${{ steps.meta.outputs.version }}
+            ${{ env.IMAGE }}:${{ steps.meta.outputs.tags }}
             ${{ env.IMAGE }}:latest
