@@ -56,13 +56,8 @@ jobs:
         with:
           images: |
             ${{ env.IMAGE }}
-          tags: |
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=semver,pattern={{raw}}
 
       - uses: docker/build-push-action@v2
         with:
           push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ steps.meta.outputs.tags }}
-            ${{ env.IMAGE }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
