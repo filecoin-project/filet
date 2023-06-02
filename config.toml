@@ -12,3 +12,6 @@
             Path = "/tmp/data"
             OmitHeader = false
             FilePattern = "{table}.csv"
+
+[Fevm]
+    EnableEthRPC = true

@@ -135,3 +135,6 @@ dmypy.json
 *.car
 *.car.zst
 *.car.aria2
+
+# IDE
+.idea/
