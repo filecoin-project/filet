@@ -12,10 +12,7 @@ RUN apt-get update -y && \
 
 WORKDIR $SRC_PATH
 
-RUN git clone https://github.com/filecoin-project/lily-archiver.git && \
-    cd lily-archiver && make build
-
-RUN git clone --depth 1 --branch master https://github.com/filecoin-project/lily.git && \
+RUN git clone --depth 1 https://github.com/filecoin-project/lily.git && git checkout 7e61323 && \
     cd lily && CGO_ENABLED=1 make clean all
 
 FROM buildpack-deps:buster-curl
@@ -26,7 +23,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 ENV SRC_PATH /build
 
-COPY --from=builder $SRC_PATH/lily-archiver/lily-archiver /usr/local/bin/archiver
 COPY --from=builder $SRC_PATH/lily/lily /usr/local/bin/lily
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libOpenCL.so* /lib/
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libhwloc.so* /lib/
