@@ -12,7 +12,7 @@ RUN apt-get update -y && \
 
 WORKDIR $SRC_PATH
 
-RUN git clone --depth 1 https://github.com/filecoin-project/lily.git && \
+RUN git clone --depth 12 https://github.com/filecoin-project/lily.git && \
     cd lily && git checkout 7e61323 && CGO_ENABLED=1 make clean all
 
 FROM buildpack-deps:buster-curl
